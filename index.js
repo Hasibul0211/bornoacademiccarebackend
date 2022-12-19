@@ -21,10 +21,10 @@ async function run() {
         const databaseName = client.db("bornoacademiccare");
         const collectionName = databaseName.collection("authors");
         const addedStudent = databaseName.collection('add-student');
-        // create a document to insert
+        const debitCredit = databaseName.collection('debit-credit')
 
 
-        // author post api 
+
 
         app.post('/add-author', async (req, res) => {
             const authorData = req.body;
@@ -69,8 +69,69 @@ async function run() {
 
 
 
+        // debit credit data api
+        app.post('/debit-credit', async (req, res) => {
+
+            const debitData = req.body;
+            const getLastValue = await debitCredit.find({}).sort({ _id: -1 }).limit(1).toArray();
+            const { status, amounts, date, specification } = req.body;
+
+            if (!getLastValue[0]) {
+
+                if (status == "debit") {
+                    const data = { status, amounts, date, specification, totalAmount: Number(amounts) }
+                    const debitDataPost = await debitCredit.insertOne(data);
+                    res.json(debitDataPost)
+                }
+                else {
+                    const data = { status, amounts, date, specification, totalAmount: -Number(amounts) }
+                    const debitDataPost = await debitCredit.insertOne(data);
+                    res.json(debitDataPost)
+                }
+
+            }
+            else {
+                if (status == "debit") {
+                    const data = {
+                        status, amounts, date, specification, totalAmount: Number(amounts) + getLastValue[0].totalAmount
+                    }
+                    // console.log("lasl value total amount", getLastValue[0].totalAmount);
+                    const debitDataPost = await debitCredit.insertOne(data);
+                    res.json(debitDataPost)
+                }
+                else {
+                    const data = {
+                        status, amounts, date, specification, totalAmount: getLastValue[0].totalAmount - Number(amounts)
+                    }
+                    // console.log("lasl value total amount", getLastValue[0].totalAmount);
+                    const debitDataPost = await debitCredit.insertOne(data);
+                    res.json(debitDataPost)
+                }
+            }
 
 
+            console.log("last value here", getLastValue);
+            // console.log("this last value", lastvalue);
+            // const lastvalue = getLastValue.totalAmount || 0
+            // let totalAmount;
+            // if (status == "debit") {
+            //     totalAmount = parseInt(lastvalue) + parseInt(amounts)
+            // }
+            // else {
+            //     totalAmount = parseInt(lastvalue) - parseInt(amounts)
+            // }
+            // console.log("total amount", totalAmount);
+
+
+
+
+
+        })
+
+        app.get('/debit-credit', async (req, res) => {
+            const getDebitCredit = await debitCredit.find().toArray()
+            res.send(getDebitCredit)
+        })
 
     } finally {
         // await client.close();
