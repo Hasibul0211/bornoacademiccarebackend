@@ -66,6 +66,13 @@ async function run() {
 
         })
 
+        app.delete('/add-student/:id', async (req, res) => {
+            const id = req.params.id;
+            const queryStudentDelete = { _id: ObjectId(id) };
+            const deleteStudentResult = await addedStudent.deleteOne(queryStudentDelete)
+            res.json(deleteStudentResult)
+            console.log(id);
+        })
 
 
 
@@ -95,7 +102,7 @@ async function run() {
                     const data = {
                         status, amounts, date, specification, totalAmount: Number(amounts) + getLastValue[0].totalAmount
                     }
-                    // console.log("lasl value total amount", getLastValue[0].totalAmount);
+
                     const debitDataPost = await debitCredit.insertOne(data);
                     res.json(debitDataPost)
                 }
@@ -103,27 +110,12 @@ async function run() {
                     const data = {
                         status, amounts, date, specification, totalAmount: getLastValue[0].totalAmount - Number(amounts)
                     }
-                    // console.log("lasl value total amount", getLastValue[0].totalAmount);
+
                     const debitDataPost = await debitCredit.insertOne(data);
                     res.json(debitDataPost)
                 }
             }
-
-
             console.log("last value here", getLastValue);
-            // console.log("this last value", lastvalue);
-            // const lastvalue = getLastValue.totalAmount || 0
-            // let totalAmount;
-            // if (status == "debit") {
-            //     totalAmount = parseInt(lastvalue) + parseInt(amounts)
-            // }
-            // else {
-            //     totalAmount = parseInt(lastvalue) - parseInt(amounts)
-            // }
-            // console.log("total amount", totalAmount);
-
-
-
 
 
         })
@@ -131,6 +123,14 @@ async function run() {
         app.get('/debit-credit', async (req, res) => {
             const getDebitCredit = await debitCredit.find().toArray()
             res.send(getDebitCredit)
+        })
+
+        app.delete('/debit-credit/:id', async (req, res) => {
+            const id = req.params.id;
+            const querydcDelete = { _id: ObjectId(id) };
+            const deletedcResult = await debitCredit.deleteOne(querydcDelete)
+            res.json(deletedcResult)
+            console.log(querydcDelete);
         })
 
     } finally {
