@@ -23,6 +23,7 @@ async function run() {
         const addedStudent = databaseName.collection('add-student');
         const debitCredit = databaseName.collection('debit-credit')
         const feeesRecord = databaseName.collection('fees-record')
+        const setMonthName = databaseName.collection('months-name')
 
 
 
@@ -159,6 +160,25 @@ async function run() {
             res.json(deleteResult)
             console.log(id);
         })
+
+        // month api here 
+        app.post('/month', async (req, res) => {
+            const monthBody = req.body;
+            const monthData = await setMonthName.insertOne(monthBody)
+            res.json(monthData)
+        })
+
+        app.get('/month', async (req, res) => {
+            const getMonthData = await setMonthName.find().toArray();
+            res.send(getMonthData)
+        })
+        app.delete('/month', async (req, res) => {
+            // const queryDelete = { _id: ObjectId(id) };
+            const deleteMonthResult = await setMonthName.deleteMany()
+            res.json(deleteMonthResult)
+
+        })
+
 
     } finally {
         // await client.close();
