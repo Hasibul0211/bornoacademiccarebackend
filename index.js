@@ -22,7 +22,7 @@ async function run() {
         const collectionName = databaseName.collection("authors");
         const addedStudent = databaseName.collection('add-student');
         const debitCredit = databaseName.collection('debit-credit')
-
+        const feeesRecord = databaseName.collection('fees-record')
 
 
 
@@ -65,6 +65,14 @@ async function run() {
             res.send(getStudentData)
 
         })
+        app.get('/student-count', async (req, res) => {
+            const getStudentData = await addedStudent.countDocuments({})
+            console.log(getStudentData);
+            res.send({ count: getStudentData })
+
+        })
+
+
 
         app.delete('/add-student/:id', async (req, res) => {
             const id = req.params.id;
@@ -131,6 +139,25 @@ async function run() {
             const deletedcResult = await debitCredit.deleteOne(querydcDelete)
             res.json(deletedcResult)
             console.log(querydcDelete);
+        })
+
+        app.post('/fees-recod', async (req, res) => {
+            const feesRecord = req.body;
+            const feesRecordData = await feeesRecord.insertOne(feesRecord);
+            res.json(feesRecordData)
+
+        })
+
+        app.get('/fees-record', async (req, res) => {
+            const getFeesRecord = await feeesRecord.find().toArray();
+            res.send(getFeesRecord)
+        })
+        app.delete('/fees-record/:id', async (req, res) => {
+            const id = req.params.id;
+            const queryDelete = { _id: ObjectId(id) };
+            const deleteResult = await feeesRecord.deleteOne(queryDelete)
+            res.json(deleteResult)
+            console.log(id);
         })
 
     } finally {
