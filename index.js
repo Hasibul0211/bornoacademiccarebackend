@@ -22,8 +22,10 @@ async function run() {
         const collectionName = databaseName.collection("authors");
         const addedStudent = databaseName.collection('add-student');
         const debitCredit = databaseName.collection('debit-credit')
-        const feeesRecord = databaseName.collection('fees-record')
-        const setMonthName = databaseName.collection('months-name')
+        // const feeesRecord = databaseName.collection('fees-record')
+        const setMonthName = databaseName.collection('months-name');
+        const fees = databaseName.collection('running-fees')
+
 
 
 
@@ -142,24 +144,24 @@ async function run() {
             console.log(querydcDelete);
         })
 
-        app.post('/fees-recod', async (req, res) => {
-            const feesRecord = req.body;
-            const feesRecordData = await feeesRecord.insertOne(feesRecord);
-            res.json(feesRecordData)
+        // app.post('/fees-recod', async (req, res) => {
+        //     const feesRecord = req.body;
+        //     const feesRecordData = await feeesRecord.insertOne(feesRecord);
+        //     res.json(feesRecordData)
 
-        })
+        // })
 
-        app.get('/fees-record', async (req, res) => {
-            const getFeesRecord = await feeesRecord.find().toArray();
-            res.send(getFeesRecord)
-        })
-        app.delete('/fees-record/:id', async (req, res) => {
-            const id = req.params.id;
-            const queryDelete = { _id: ObjectId(id) };
-            const deleteResult = await feeesRecord.deleteOne(queryDelete)
-            res.json(deleteResult)
-            console.log(id);
-        })
+        // app.get('/fees-record', async (req, res) => {
+        //     const getFeesRecord = await feeesRecord.find().toArray();
+        //     res.send(getFeesRecord)
+        // })
+        // app.delete('/fees-record/:id', async (req, res) => {
+        //     const id = req.params.id;
+        //     const queryDelete = { _id: ObjectId(id) };
+        //     const deleteResult = await feeesRecord.deleteOne(queryDelete)
+        //     res.json(deleteResult)
+        //     console.log(id);
+        // })
 
         // month api here 
         app.post('/month', async (req, res) => {
@@ -179,6 +181,25 @@ async function run() {
 
         })
 
+        // fees integrate here 
+
+        app.post('/fees', async (req, res) => {
+            const feesBody = req.body;
+            const feesData = await fees.insertOne(feesBody);
+            res.json(feesData)
+            console.log(feesBody);
+        })
+        app.get('/fees', async (req, res) => {
+            const getFeesData = await fees.find().toArray();
+            res.send(getFeesData)
+        })
+        app.delete('/fees/:id', async (req, res) => {
+            const id = req.params.id;
+            const queryDelete = { _id: ObjectId(id) };
+            const deleteResult = await fees.deleteOne(queryDelete)
+            res.json(deleteResult)
+            console.log(id);
+        })
 
     } finally {
         // await client.close();
