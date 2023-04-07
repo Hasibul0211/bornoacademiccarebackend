@@ -35,6 +35,7 @@ async function run() {
         // const feeesRecord = databaseName.collection('fees-record')
         const setMonthName = databaseName.collection('months-name');
         const fees = databaseName.collection('running-fees')
+        const notice = databaseName.collection('notice');
 
 
 
@@ -210,6 +211,26 @@ async function run() {
             res.json(deleteResult)
             console.log(id);
         })
+
+        // add notice section
+
+        app.post('/add-notice', async (req, res) => {
+            const noticeData = await notice.insertOne(req.body)
+            res.json(noticeData)
+            console.log(body)
+        })
+        app.get('/notice', async (req, res) => {
+            const getNotice = await notice.find().toArray();
+            res.send(getNotice)
+        })
+        app.delete('/notice/:id', async (req, res) => {
+            const getId = req.params.id;
+            const deleteNotice = { _id: ObjectId(getId) }
+            const deleteNoticeResult = await notice.deleteOne(deleteNotice);
+            res.json(deleteNoticeResult)
+            console.log(getId);
+        })
+
 
     } finally {
         // await client.close();
